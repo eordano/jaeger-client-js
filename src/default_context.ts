@@ -1,3 +1,5 @@
+import { Span } from "./span"
+
 // Copyright (c) 2016 Uber Technologies, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -9,7 +11,7 @@
 // is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
-
+export type Context = typeof DefaultContext
 export class DefaultContext {
   _span: Span
 

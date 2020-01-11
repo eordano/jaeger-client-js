@@ -61,7 +61,7 @@ export class TextMapCodec {
 
   extract(carrier?: any): SpanContext | null  {
     let spanContext = new SpanContext()
-    let baggage = {}
+    let baggage: Record<string, any> = {}
     let debugId = ''
 
     for (let key in carrier) {

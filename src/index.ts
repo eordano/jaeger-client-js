@@ -20,7 +20,7 @@ import { Tracer } from './tracer'
 import { ConstSampler } from './samplers/const_sampler'
 import { ProbabilisticSampler } from './samplers/probabilistic_sampler'
 import { RateLimitingSampler } from './samplers/rate_limiting_sampler'
-import { RemoteSampler } from './samplers/remote_sampler'
+import { RemoteControlledSampler } from './samplers/remote_sampler'
 import { PrioritySampler } from './samplers/experimental/priority_sampler'
 import { TagEqualsSampler } from './samplers/experimental/tag_equals_sampler'
 
@@ -40,7 +40,7 @@ import { PrometheusMetricsFactory } from './metrics/prometheus'
 
 import * as opentracing from 'opentracing'
 
-module.exports = {
+export default {
   Configuration,
   initTracer: Configuration.initTracer,
   initTracerFromEnv: ConfigurationEnv.initTracer,
@@ -51,7 +51,7 @@ module.exports = {
   ConstSampler,
   ProbabilisticSampler,
   RateLimitingSampler,
-  RemoteSampler,
+  RemoteControlledSampler,
   experimental: {
     PrioritySampler,
     TagEqualsSampler,

@@ -12,4 +12,4 @@
 
 export const SAMPLER_API_V2 = 'SAMPLER_API_V2'
 
-export type SamplerApiVersion = typeof SAMPLER_API_V2
+export type SamplerApiVersion = string

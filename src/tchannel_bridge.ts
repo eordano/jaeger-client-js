@@ -10,15 +10,14 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { assert } from 'assert'
 import * as constants from './constants'
-import { DefaultContext } from './default_context'
+import { Context, DefaultContext } from './default_context'
 import { Span } from './span'
-import { SpanContext } from './span_context'
 import { Utils } from './util'
-import { opentracing } from 'opentracing'
+import opentracing from 'opentracing'
 import { Tracer } from './tracer'
 import { TextMapCodec } from './propagators/text_map_codec'
+import { SpanContext } from './span_context'
 
 let TCHANNEL_TRACING_PREFIX = '$tracing$'
 
@@ -38,7 +37,6 @@ export class TChannelBridge {
    */
   constructor(tracer: Tracer, options: any = {}) {
     this._tracer = tracer
-    assert.equal('object', typeof options, 'options must be an object')
     this._codec = new TextMapCodec({
       urlEncoding: false,
       contextKey: TCHANNEL_TRACING_PREFIX + constants.TRACER_STATE_HEADER_NAME,
@@ -137,7 +135,7 @@ export class TChannelBridge {
     let context: Context = req.context || this._contextFactory()
     let childOf: Span = this._getSpan(context)
     let clientSpan = this._tracer.startSpan(endpoint, {
-      childOf: childOf, // ok if null, will start a new trace
+      childOf: childOf as any, // ok if null, will start a new trace
     })
     clientSpan.setTag(opentracing.Tags.PEER_SERVICE, req.serviceName)
     clientSpan.setTag(
@@ -222,7 +220,7 @@ export class TChannelBridge {
   }
 
   _extractSpan(operationName: string, headers: any): Span {
-    let traceContext?: SpanContext | null  = this._codec.extract(
+    let traceContext: SpanContext | null = this._codec.extract(
       headers,
     )
     let tags: any = {}

@@ -10,14 +10,12 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { opentracing } from 'opentracing'
 import { Span } from './span'
-import { Utils } from './util'
 
 export class TestUtils {
   static hasTags(span: Span, expectedTags: any): boolean {
     // TODO(oibe) make this work for duplicate tags
-    let actualTags = {}
+    let actualTags: Record<string, any> = {}
     for (let i = 0; i < span._tags.length; i++) {
       let key = span._tags[i].key
       actualTags[key] = span._tags[i].value
@@ -52,14 +50,14 @@ export class TestUtils {
    * @param {Object} span - span from which to read the tags.
    * @param {Array} [keys] - if specified, only tags with these keys are returned.
    */
-  static getTags(span?: Span, keys: Array<string> | null ): any {
-    let actualTags = {}
+  static getTags(span: Span, keys: Array<string> | null ): any {
+    let actualTags: Record<string, any> = {}
     for (let i = 0; i < span._tags.length; i++) {
       let key = span._tags[i].key
       actualTags[key] = span._tags[i].value
     }
     if (keys) {
-      let filteredTags = {}
+      let filteredTags: Record<string, any> = {}
       for (let i = 0; i < keys.length; i++) {
         let key = keys[i]
         if (actualTags.hasOwnProperty(key)) {

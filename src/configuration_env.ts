@@ -40,7 +40,7 @@ export class ConfigurationEnv {
   }
 
   static _getSamplerFromEnv(config) {
-    let samplerConfig = {}
+    let samplerConfig: Record<string, any> = {}
     let value = ConfigurationEnv._getConfigValue(
       config.sampler,
       'type',
@@ -99,7 +99,7 @@ export class ConfigurationEnv {
   }
 
   static _getReporterFromEnv(config) {
-    let reporterConfig = {}
+    let reporterConfig: Record<string, any> = {}
     let value = ConfigurationEnv._getConfigValue(
       config.reporter,
       'logSpans',
@@ -179,7 +179,7 @@ export class ConfigurationEnv {
     if (options.tags) {
       return options.tags
     }
-    let tags = {}
+    let tags: Record<string, any> = {}
     if (process.env.JAEGER_TAGS) {
       let tagsList = process.env.JAEGER_TAGS.split(',')
       let len = tagsList.length
@@ -209,7 +209,7 @@ export class ConfigurationEnv {
    * @param {Object} config - configuration, see Configuration.initTracer
    * @param {Object} options - options, see Configuration.initTracer
    */
-  static initTracer(config = {}, options = {}) {
+  static initTracer(config: Record<string, any> = {}, options: Record<string, any> = {}) {
     ConfigurationEnv._validateEnv()
 
     config.disable =
@@ -225,7 +225,7 @@ export class ConfigurationEnv {
     }
 
     if (!options.reporter) {
-      let reporterConfig = ConfigurationEnv._getReporterFromEnv(config, options)
+      let reporterConfig = ConfigurationEnv._getReporterFromEnv(config)
       if (Object.keys(reporterConfig).length > 0) {
         config.reporter = reporterConfig
       }

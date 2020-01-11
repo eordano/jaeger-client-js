@@ -10,16 +10,20 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { url } from 'url'
-import { {SAMPLER_API_V2} } from './constants'
-import { {adaptSamplerOrThrow} } from './_adapt_sampler'
+import url from 'url'
+import { NullLogger } from '../logger'
+import { Metrics } from '../metrics/metrics'
+import { NoopMetricFactory } from '../metrics/noop/metric_factory'
+import { Span } from '../span'
+import { Logger } from '../types/logger'
+import { Sampler, SamplingDecision } from '../types/sampler'
+import { SamplingStrategyResponse } from '../types/sampler-thrift'
+import { Utils } from '../util'
+import { SAMPLER_API_V2 } from './constants'
+import { PerOperationSampler } from './per_operation_sampler'
 import { ProbabilisticSampler } from './probabilistic_sampler'
 import { RateLimitingSampler } from './rate_limiting_sampler'
-import { PerOperationSampler } from './per_operation_sampler'
-import { Metrics } from '../metrics/metrics'
-import { NullLogger } from '../logger'
-import { NoopMetricFactory } from '../metrics/noop/metric_factory'
-import { Utils } from '../util'
+import { adaptSamplerOrThrow } from './_adapt_sampler'
 
 const DEFAULT_INITIAL_SAMPLING_RATE = 0.001
 const DEFAULT_REFRESH_INTERVAL = 60000

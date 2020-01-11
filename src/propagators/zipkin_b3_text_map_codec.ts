@@ -90,7 +90,7 @@ export class ZipkinB3TextMapCodec {
   }
 
   extract(carrier?: any): SpanContext | null  {
-    let baggage = {}
+    let baggage: Record<string, any> = {}
     let flags = 0
     let debugId = ''
     let parentId = ''

@@ -10,20 +10,20 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
+import opentracing from 'opentracing'
+import * as constants from './constants'
+import { Metrics } from './metrics/metrics'
+import { CompositeReporter } from './reporters/composite_reporter'
+import { HTTPSender } from './reporters/http_sender'
+import { LoggingReporter } from './reporters/logging_reporter'
+import { RemoteReporter } from './reporters/remote_reporter'
+import { UDPSender } from './reporters/udp_sender'
 import { ConstSampler } from './samplers/const_sampler'
 import { ProbabilisticSampler } from './samplers/probabilistic_sampler'
 import { RateLimitingSampler } from './samplers/rate_limiting_sampler'
-import { RemoteReporter } from './reporters/remote_reporter'
-import { CompositeReporter } from './reporters/composite_reporter'
-import { LoggingReporter } from './reporters/logging_reporter'
-import { RemoteSampler } from './samplers/remote_sampler'
-import { Metrics } from './metrics/metrics'
-import { Tracer } from './tracer'
-import { UDPSender } from './reporters/udp_sender'
-import { HTTPSender } from './reporters/http_sender'
-import { opentracing } from 'opentracing'
-import * as constants from './constants'
+import { RemoteControlledSampler } from './samplers/remote_sampler'
 import { RemoteThrottler } from './throttler/remote_throttler'
+import { Tracer } from './tracer'
 import { Utils } from './util'
 
 let jaegerSchema = {
@@ -97,7 +97,7 @@ export class Configuration {
     }
 
     if (type === constants.SAMPLER_TYPE_REMOTE) {
-      sampler = new RemoteSampler(config.serviceName, {
+      sampler = new RemoteControlledSampler(config.serviceName, {
         sampler: new ProbabilisticSampler(param),
         hostPort: hostPort,
         host: host,
@@ -112,7 +112,7 @@ export class Configuration {
   }
 
   static _getReporter(config, options) {
-    let reporterConfig = {}
+    let reporterConfig: Record<string, any> = {}
     let reporters = []
     let isHTTPSender = false
     let senderConfig = {
@@ -203,7 +203,7 @@ export class Configuration {
    * @param {boolean} [options.traceId128bit] - generate root span with a 128bit traceId.
    * @param {boolean} [options.shareRpcSpan] - Share the same span for rpc span_kind.
    */
-  static initTracer(config, options = {}) {
+  static initTracer(config: Record<string, any>, options: Record<string, any> = {}) {
     let reporter
     let sampler
     let throttler
@@ -219,7 +219,7 @@ export class Configuration {
     if (config.sampler) {
       sampler = Configuration._getSampler(config, options)
     } else {
-      sampler = new RemoteSampler(config.serviceName, options)
+      sampler = new RemoteControlledSampler(config.serviceName, options)
     }
     if (!options.reporter) {
       reporter = Configuration._getReporter(config, options)

@@ -10,18 +10,16 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { fs } from 'fs'
-import { opentracing } from 'opentracing'
-import { path } from 'path'
-import { {Thrift} } from 'thriftrw'
+import opentracing from 'opentracing'
+import { Span } from './span'
+import { LogData, Reference, Tag } from './types/jaeger-thrift'
 import { Utils } from './util'
+
+declare var Thrift: any
 
 export class ThriftUtils {
   static _thrift = new Thrift({
-    source: fs.readFileSync(
-      path.join(__dirname, './jaeger-idl/thrift/jaeger.thrift'),
-      'ascii',
-    ),
+    source: '',
     allowOptionalArguments: true,
   })
   static emptyBuffer: Buffer = Utils.newBuffer(8)
@@ -134,7 +132,6 @@ export class ThriftUtils {
   static spanToThrift(span: Span): any {
     let tags = ThriftUtils.getThriftTags(span._tags)
     let logs = ThriftUtils.getThriftLogs(span._logs)
-    let unsigned = true
 
     return {
       traceIdLow: ThriftUtils.getTraceIdLow(span._spanContext.traceId),

@@ -91,7 +91,7 @@ export class Utils {
   }
 
   static clone(obj: any): any {
-    let newObj = {}
+    let newObj: Record<string, any> = {}
     for (let key in obj) {
       if (Object.prototype.hasOwnProperty.call(obj, key)) {
         newObj[key] = obj[key]
