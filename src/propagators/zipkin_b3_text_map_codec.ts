@@ -10,12 +10,12 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import * as constants from '../constants.js'
-import { Metrics } from '../metrics/metrics.js'
+import * as constants from '../constants'
+import { Metrics } from '../metrics/metrics'
 import { NoopMetricFactory } from '../metrics/noop/metric_factory'
-import { SpanContext } from '../span_context.js'
-import { Utils } from '../util.js'
-import { {parseCommaSeparatedBaggage} } from '../propagators/baggage'
+import { SpanContext } from '../span_context'
+import { Utils } from '../util'
+import {parseCommaSeparatedBaggage} from '../propagators/baggage'
 
 const ZIPKIN_PARENTSPAN_HEADER = 'x-b3-parentspanid'
 const ZIPKIN_SPAN_HEADER = 'x-b3-spanid'

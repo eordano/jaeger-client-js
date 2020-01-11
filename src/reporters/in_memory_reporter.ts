@@ -10,8 +10,8 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { Span } from '../span.js'
-import { ThriftUtils } from '../thrift.js'
+import { Span } from '../span'
+import { ThriftUtils } from '../thrift'
 
 export class InMemoryReporter implements Reporter {
   _spans: Array<Span>

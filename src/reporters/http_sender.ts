@@ -17,7 +17,7 @@ import { path } from 'path'
 import * as URL from 'url'
 import { {Thrift} } from 'thriftrw'
 
-import { NullLogger } from '../logger.js'
+import { NullLogger } from '../logger'
 import { SenderUtils } from './sender_utils'
 
 const DEFAULT_PATH = '/api/traces'

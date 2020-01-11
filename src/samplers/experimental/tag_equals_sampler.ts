@@ -10,9 +10,9 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { {adaptSamplerOrThrow} } from '../_adapt_sampler'
 import { BaseSamplerV2 } from '../v2/base'
 import { Span } from '../../span'
+import { SamplingDecision } from '../../types/sampler'
 
 export type Matcher = {
   tagValue: string
@@ -77,7 +77,7 @@ export class TagEqualsSampler extends BaseSamplerV2 {
   }
 
   _decide(span: Span, tagValue: any): SamplingDecision {
-    const match?: Matcher | null  = this._matchers[tagValue]
+    const match: Matcher | null  = this._matchers[tagValue]
     if (match) {
       if (match.firehose) {
         span._spanContext._setFirehose(true)

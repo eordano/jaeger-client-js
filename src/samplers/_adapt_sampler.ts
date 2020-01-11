@@ -10,9 +10,11 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { {SAMPLER_API_V2} } from './constants'
+import {SAMPLER_API_V2} from './constants'
 import { Span } from '../span'
 import { BaseSamplerV2 } from './v2/base'
+import { Sampler, SamplingDecision } from '../types/sampler'
+import { LegacySamplerV1 } from '../types/legacy_sampler_v1'
 
 export function adaptSampler(sampler?: any): Sampler | null  {
   if (!sampler) {

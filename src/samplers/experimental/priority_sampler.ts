@@ -10,10 +10,12 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { {adaptSamplerOrThrow} } from '../_adapt_sampler'
-import { BaseSamplerV2 } from '../v2/base'
 import { Span } from '../../span'
 import { Utils } from '../../util'
+import { BaseSamplerV2 } from '../v2/base'
+import { adaptSamplerOrThrow } from '../_adapt_sampler'
+import { Sampler, SamplingDecision } from '../../types/sampler'
+import { LegacySamplerV1 } from '../../types/legacy_sampler_v1'
 
 /**
  * PrioritySamplerState keeps the state of all underlying samplers, specifically
@@ -50,7 +52,7 @@ export class PrioritySampler extends BaseSamplerV2 {
   _getOrCreateState(span: Span): PrioritySamplerState {
     const store = span.context()._samplingState.extendedState()
     const stateKey = this.uniqueName()
-    let state?: PrioritySamplerState | null  = store[stateKey]
+    let state: PrioritySamplerState | null  = store[stateKey]
     if (!state) {
       state = new PrioritySamplerState(this._delegates.length)
       store[stateKey] = state

@@ -10,10 +10,15 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { NullLogger } from '../logger.js'
-import { ThriftUtils } from '../thrift.js'
-import { Metrics } from '../metrics/metrics.js'
+import { NullLogger } from '../logger'
+import { ThriftUtils } from '../thrift'
+import { Metrics } from '../metrics/metrics'
 import { NoopMetricFactory } from '../metrics/noop/metric_factory'
+import { Reporter, Sender } from '../types/reporter'
+import { Process } from '../types/process_setter'
+import { Span } from '../span'
+import { Tag } from '../types/jaeger-thrift'
+import { Logger } from '../types/logger'
 
 const DEFAULT_BUFFER_FLUSH_INTERVAL_MILLIS = 1000
 

@@ -10,6 +10,7 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
+import { Counter, Gauge } from '../types/metrics'
 class CounterPromWrapper {
   _counter: any
 
@@ -53,7 +54,7 @@ export class PrometheusMetricsFactory {
    * @param {Object} promClient - prom-client object.
    * @param {String} namespace - Optional a namespace that prepends to each metric name.
    */
-  constructor(promClient?: Object, namespace: string | null ) {
+  constructor(promClient: any, namespace: string | null ) {
     if (!promClient || !promClient.Counter || !promClient.Gauge) {
       throw new Error('prom-client must be provided')
     }

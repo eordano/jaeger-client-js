@@ -12,6 +12,7 @@
 
 import * as constants from '../constants'
 import { LegacySamplerV1Base } from './_adapt_sampler'
+import { LegacySamplerV1 } from '../types/legacy_sampler_v1'
 
 export class ProbabilisticSampler extends LegacySamplerV1Base
   implements LegacySamplerV1 {

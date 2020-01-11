@@ -13,6 +13,7 @@
 import * as constants from '../constants'
 import { LegacySamplerV1Base } from './_adapt_sampler'
 import { RateLimiter } from '../rate_limiter'
+import { LegacySamplerV1 } from '../types/legacy_sampler_v1'
 
 export class RateLimitingSampler extends LegacySamplerV1Base
   implements LegacySamplerV1 {
@@ -33,7 +34,7 @@ export class RateLimitingSampler extends LegacySamplerV1Base
     return this._maxTracesPerSecond !== prevMaxTracesPerSecond
   }
 
-  _init(maxTracesPerSecond?: number, initBalance: number | null ) {
+  _init(maxTracesPerSecond?: number, initBalance?: number | null ) {
     if (maxTracesPerSecond < 0) {
       throw new Error(
         `maxTracesPerSecond must be greater than 0.0.  Received ${maxTracesPerSecond}`,

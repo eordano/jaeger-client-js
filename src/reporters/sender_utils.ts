@@ -10,12 +10,14 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { {Thrift} } from 'thriftrw'
+import {Thrift} from 'thriftrw'
+import { SenderCallback } from '../types/reporter'
+import { Process } from '../types/process_setter'
 
 export class SenderUtils {
   static invokeCallback(
     callback?: SenderCallback,
-    numSpans: number,
+    numSpans?: number,
     error?: string,
   ) {
     if (callback) {

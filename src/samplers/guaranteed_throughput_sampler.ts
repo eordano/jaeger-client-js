@@ -13,6 +13,7 @@
 import * as constants from '../constants'
 import { ProbabilisticSampler } from './probabilistic_sampler'
 import { RateLimitingSampler } from './rate_limiting_sampler'
+import { LegacySamplerV1 } from '../types/legacy_sampler_v1'
 
 // GuaranteedThroughputProbabilisticSampler is a sampler that leverages both probabilisticSampler and
 // rateLimitingSampler. The rateLimitingSampler is used as a guaranteed lower bound sampler such that

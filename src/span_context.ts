@@ -26,9 +26,9 @@ export class SpanContext {
   _remote: boolean // indicates that span context represents a remote parent
 
   constructor(
-    traceId: any,
-    spanId: any,
-    parentId: any,
+    traceId?: any,
+    spanId?: any,
+    parentId?: any,
     traceIdStr?: string | null ,
     spanIdStr?: string | null ,
     parentIdStr?: string | null ,

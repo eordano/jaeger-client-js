@@ -10,7 +10,7 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { Restriction } from '../baggage/restriction.js'
+import { Restriction } from '../baggage/restriction'
 
 /**
  * BaggageRestrictionManager is an interface for a class that manages baggage

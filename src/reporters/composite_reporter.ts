@@ -10,8 +10,8 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { Span } from '../span.js'
-import { Utils } from '../util.js'
+import { Span } from '../span'
+import { Utils } from '../util'
 
 export class CompositeReporter implements Reporter {
   _reporters: Array<Reporter>

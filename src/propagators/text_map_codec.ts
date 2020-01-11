@@ -15,7 +15,7 @@ import { Metrics } from '../metrics/metrics'
 import { NoopMetricFactory } from '../metrics/noop/metric_factory'
 import { SpanContext } from '../span_context'
 import { Utils } from '../util'
-import { {parseCommaSeparatedBaggage} } from '../propagators/baggage'
+import {parseCommaSeparatedBaggage} from '../propagators/baggage'
 
 export class TextMapCodec {
   _urlEncoding: boolean

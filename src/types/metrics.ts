@@ -31,7 +31,7 @@ export interface Gauge {
 }
 
 export interface MetricsFactory {
-  createCounter(name: string, tags: any): Counter
-  createTimer(name: string, tags: any): Timer
-  createGauge(name: string, tags: any): Gauge
+  createCounter(name: string, tags?: any): Counter
+  createTimer(name: string, tags?: any): Timer
+  createGauge(name: string, tags?: any): Gauge
 }

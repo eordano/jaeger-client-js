@@ -10,10 +10,13 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { assert } from 'assert'
-import { {SAMPLER_API_V2} } from './constants'
+import {SAMPLER_API_V2} from './constants'
 import { GuaranteedThroughputSampler } from './guaranteed_throughput_sampler'
 import { ProbabilisticSampler } from './probabilistic_sampler'
+import { Sampler, SamplingDecision } from '../types/sampler'
+import { LegacySamplerV1 } from '../types/legacy_sampler_v1'
+import { Span } from '../span'
+import { PerOperationSamplingStrategies } from '../types/sampler-thrift'
 
 type SamplersByOperation = {
   __proto__: null
@@ -42,14 +45,6 @@ export class PerOperationSampler implements Sampler {
   }
 
   update(strategies: PerOperationSamplingStrategies): boolean {
-    assert(
-      typeof strategies.defaultLowerBoundTracesPerSecond === 'number',
-      'expected strategies.defaultLowerBoundTracesPerSecond to be number',
-    )
-    assert(
-      typeof strategies.defaultSamplingProbability === 'number',
-      'expected strategies.defaultSamplingProbability to be number',
-    )
 
     let updated: boolean =
       this._defaultLowerBound !== strategies.defaultLowerBoundTracesPerSecond
@@ -102,7 +97,7 @@ export class PerOperationSampler implements Sampler {
         this._defaultLowerBound,
         this._defaultSampler.samplingRate,
       )
-      this._samplersByOperation[operation] = sampler
+      this._samplersByOperation[operation] = sampler as any
     }
     return sampler.isSampled(operation, tags)
   }

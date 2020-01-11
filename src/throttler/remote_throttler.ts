@@ -10,10 +10,13 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { Metrics } from '../metrics/metrics.js'
-import { NullLogger } from '../logger.js'
+import { Metrics } from '../metrics/metrics'
+import { NullLogger } from '../logger'
 import { NoopMetricFactory } from '../metrics/noop/metric_factory'
-import { Utils } from '../util.js'
+import { Utils } from '../util'
+import { Logger } from '../types/logger'
+import { Process } from '../types/process_setter'
+import { CreditResponse } from '../types/throttler'
 
 const DEFAULT_REFRESH_INTERVAL_MS = 5000
 const DEFAULT_INITIAL_DELAY_MS = 5000

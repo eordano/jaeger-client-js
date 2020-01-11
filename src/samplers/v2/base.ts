@@ -10,8 +10,9 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import { {SAMPLER_API_V2} } from '../constants.js'
+import {SAMPLER_API_V2} from '../constants'
 import { Span } from '../../span'
+import { Sampler, SamplingDecision } from '../../types/sampler'
 
 let _instanceId = 0
 

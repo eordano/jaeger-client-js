@@ -13,6 +13,7 @@
 import { NoopCounter } from './counter'
 import { NoopTimer } from './timer'
 import { NoopGauge } from './gauge'
+import { Counter, Timer, Gauge } from '../../types/metrics'
 
 
 export class NoopMetricFactory {
