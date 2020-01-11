@@ -43,7 +43,7 @@ export class RemoteControlledSampler implements Sampler {
   _samplingPath: string
   _maxOperations: number
 
-  _onSamplerUpdate: Function | null | undefined
+  _onSamplerUpdate?: Function | null 
 
   _initialDelayTimeoutHandle: any
   _refreshIntervalHandle: any
@@ -214,7 +214,7 @@ export class RemoteControlledSampler implements Sampler {
     return this._sampler.onSetTag(span, key, value)
   }
 
-  close(callback: Function | null | undefined): void {
+  close(callback?: Function | null ): void {
     clearTimeout(this._initialDelayTimeoutHandle)
     clearInterval(this._refreshIntervalHandle)
 

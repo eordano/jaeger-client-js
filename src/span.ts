@@ -10,14 +10,12 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
+import { Tags as otTags } from 'opentracing'
 import { BaggageSetter } from './baggage/baggage_setter'
-import {Tags as otTags} from 'opentracing'
 import { SpanContext } from './span_context'
-import { Reference } from './span_context'
-import { Tag } from './span_context'
-import { LogData } from './span_context'
-import { SamplingDecision } from './span_context'
 import { Tracer } from './tracer'
+import { LogData, Reference, Tag } from './types/jaeger-thrift'
+import { SamplingDecision } from './types/sampler'
 import { Utils } from './util'
 
 export class Span {
@@ -38,7 +36,7 @@ export class Span {
     operationName: string,
     spanContext: SpanContext,
     startTime: number,
-    references: Array<Reference> | null | undefined,
+    references?: Array<Reference> | null ,
   ) {
     this._tracer = tracer
     this._operationName = operationName
@@ -195,7 +193,7 @@ export class Span {
    *         If not specified, the current time (as defined by the
    *         implementation) will be used.
    */
-  finish(finishTime: number | null | undefined): void {
+  finish(finishTime?: number | null ): void {
     if (this._duration !== undefined) {
       let spanInfo = `operation=${
         this.operationName
@@ -315,7 +313,7 @@ export class Span {
    * @returns {boolean} - true if the flag was updated successfully
    * @private
    */
-  _setSamplingPriority(priority: number | null | undefined): boolean {
+  _setSamplingPriority(priority?: number | null ): boolean {
     if (priority == null) {
       return false
     }

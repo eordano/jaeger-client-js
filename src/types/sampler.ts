@@ -19,7 +19,7 @@ import { SamplerApiVersion} from '../samplers/constants'
 export type SamplingDecision = {
   sample: boolean
   retryable: boolean
-  tags: {} | null | undefined
+  tags?: {} | null 
 }
 
 export interface Sampler {
@@ -29,5 +29,5 @@ export interface Sampler {
   onSetOperationName(span: Span, operationName: string): SamplingDecision
   onSetTag(span: Span, key: string, value: any): SamplingDecision
 
-  close(callback: () => void | null | undefined): void
+  close(callback?: () => void | null ): void
 }

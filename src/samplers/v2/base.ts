@@ -51,7 +51,7 @@ export class BaseSamplerV2 implements Sampler {
     return this._cachedDecision
   }
 
-  close(callback: Function | null | undefined): void {
+  close(callback?: Function | null ): void {
     if (callback) {
       callback()
     }

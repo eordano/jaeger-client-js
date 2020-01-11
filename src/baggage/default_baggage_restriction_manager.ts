@@ -20,7 +20,7 @@ export const DEFAULT_MAX_VALUE_LENGTH = 2048
 export class DefaultBaggageRestrictionManager {
   _restriction: Restriction
 
-  constructor(maxValueLength: number | null | undefined) {
+  constructor(maxValueLength?: number | null ) {
     let length = maxValueLength || DEFAULT_MAX_VALUE_LENGTH
     this._restriction = new Restriction(true, length)
   }

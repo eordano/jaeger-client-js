@@ -42,7 +42,7 @@ export class RemoteThrottler {
 
   _initialDelayTimeoutHandle: any
   _refreshIntervalHandle: any
-  _onCreditsUpdate: Function | null | undefined
+  _onCreditsUpdate?: Function | null 
 
   /**
    * Creates a RemoteThrottler that fetches credits remotely from jaeger-agent.

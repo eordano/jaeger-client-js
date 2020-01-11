@@ -222,7 +222,7 @@ export class TChannelBridge {
   }
 
   _extractSpan(operationName: string, headers: any): Span {
-    let traceContext: SpanContext | null | undefined = this._codec.extract(
+    let traceContext?: SpanContext | null  = this._codec.extract(
       headers,
     )
     let tags: any = {}

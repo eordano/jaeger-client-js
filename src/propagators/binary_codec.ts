@@ -11,7 +11,7 @@
 // the License.
 
 export class BinaryCodec {
-  extract(carrier: any): SpanContext | null | undefined {
+  extract(carrier?: any): SpanContext | null  {
     return null
   }
 

@@ -44,9 +44,9 @@ export class SamplingState {
   _final: boolean = false
 
   // Span ID of the local root span, i.e. the first span in this process for this trace.
-  _localRootSpanIdStr: string | null | undefined
+  _localRootSpanIdStr?: string | null 
 
-  constructor(localRootSpanIdStr: string | null | undefined) {
+  constructor(localRootSpanIdStr?: string | null ) {
     this._localRootSpanIdStr = localRootSpanIdStr
   }
 
@@ -55,7 +55,7 @@ export class SamplingState {
     return this._localRootSpanIdStr === context.spanIdStr
   }
 
-  localRootSpanId(): string | null | undefined {
+  localRootSpanId(): string | null  {
     return this._localRootSpanIdStr
   }
 

@@ -10,40 +10,49 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import * as opentracing from 'opentracing';
-import { Tags as otTags } from 'opentracing';
-import { uuidv4 } from 'uuid/v4';
-import { BaggageSetter } from './baggage/baggage_setter';
-import { DefaultBaggageRestrictionManager } from './baggage/default_baggage_restriction_manager';
-import * as constants from './constants';
-import { NullLogger } from './logger';
-import { Metrics } from './metrics/metrics';
-import { NoopMetricFactory } from './metrics/noop/metric_factory';
-import { BinaryCodec } from './propagators/binary_codec';
-import { TextMapCodec } from './propagators/text_map_codec';
-import { NoopReporter } from './reporters/noop_reporter';
-import { ConstSampler } from './samplers/const_sampler';
-import { adaptSamplerOrThrow } from './samplers/_adapt_sampler';
-import { Span } from './span';
-import { SpanContext } from './span_context';
-import { DefaultThrottler } from './throttler/default_throttler';
-import { Utils } from './util';
-import { version } from './version';
+import * as opentracing from 'opentracing'
+import { Tags as otTags } from 'opentracing'
+import { uuidv4 } from 'uuid/v4'
+import { BaggageSetter } from './baggage/baggage_setter'
+import { DefaultBaggageRestrictionManager } from './baggage/default_baggage_restriction_manager'
+import * as constants from './constants'
+import { NullLogger } from './logger'
+import { Metrics } from './metrics/metrics'
+import { NoopMetricFactory } from './metrics/noop/metric_factory'
+import { BinaryCodec } from './propagators/binary_codec'
+import { TextMapCodec } from './propagators/text_map_codec'
+import { NoopReporter } from './reporters/noop_reporter'
+import { ConstSampler } from './samplers/const_sampler'
+import { adaptSamplerOrThrow } from './samplers/_adapt_sampler'
+import { Span } from './span'
+import { SpanContext } from './span_context'
+import { DefaultThrottler } from './throttler/default_throttler'
+import { Extractor } from './types/extractor'
+import { Injector } from './types/injector'
+import { Reference } from './types/jaeger-thrift'
+import { LegacySamplerV1 } from './types/legacy_sampler_v1'
+import { Process, ProcessSetter } from './types/process_setter'
+import { Reporter } from './types/reporter'
+import { Sampler } from './types/sampler'
+import { Throttler } from './types/throttler'
+import { startSpanOptions } from './types/tracer'
+import { Utils } from './util'
+import { version } from './version'
 
 export class Tracer {
-  _serviceName: string;
-  _reporter: Reporter;
-  _sampler: Sampler;
-  _logger: NullLogger;
-  _tags: any;
-  _injectors: any;
-  _extractors: any;
-  _metrics: any;
-  _baggageSetter: BaggageSetter;
-  _debugThrottler: Throttler & ProcessSetter;
-  _process: Process;
-  _traceId128bit: boolean;
-  _shareRpcSpan: boolean;
+  _serviceName: string
+  _reporter: Reporter
+  _sampler: Sampler
+  _logger: NullLogger
+  _tags: any
+  _injectors: any
+  _extractors: any
+  _metrics: any
+  _baggageSetter: BaggageSetter
+  _debugThrottler: Throttler & ProcessSetter
+  _process: Process
+  _traceId128bit: boolean
+  _shareRpcSpan: boolean
 
   /**
    * @param {String} [serviceName] - name of the current service or application.
@@ -67,81 +76,81 @@ export class Tracer {
     sampler: LegacySamplerV1 | Sampler = new ConstSampler(false),
     options: any = {}
   ) {
-    this._tags = options.tags ? Utils.clone(options.tags) : {};
-    this._tags[constants.JAEGER_CLIENT_VERSION_TAG_KEY] = `Node-${version}`;
+    this._tags = options.tags ? Utils.clone(options.tags) : {}
+    this._tags[constants.JAEGER_CLIENT_VERSION_TAG_KEY] = `Node-${version}`
     this._tags[constants.TRACER_HOSTNAME_TAG_KEY] =
-      this._tags[constants.TRACER_HOSTNAME_TAG_KEY] || os.hostname();
-    this._tags[constants.PROCESS_IP] = this._tags[constants.PROCESS_IP] || Utils.myIp();
+      this._tags[constants.TRACER_HOSTNAME_TAG_KEY] || 'localhost'
+    this._tags[constants.PROCESS_IP] = this._tags[constants.PROCESS_IP] || Utils.myIp()
 
-    this._metrics = options.metrics || new Metrics(new NoopMetricFactory());
+    this._metrics = options.metrics || new Metrics(new NoopMetricFactory())
 
-    this._serviceName = serviceName;
-    this._reporter = reporter;
+    this._serviceName = serviceName
+    this._reporter = reporter
     // TODO(joe): verify we want to throw if the sampler is invalid
-    this._sampler = adaptSamplerOrThrow(sampler);
-    this._logger = options.logger || new NullLogger();
+    this._sampler = adaptSamplerOrThrow(sampler)
+    this._logger = options.logger || new NullLogger()
     this._baggageSetter = new BaggageSetter(
       options.baggageRestrictionManager || new DefaultBaggageRestrictionManager(),
       this._metrics
-    );
-    this._debugThrottler = options.debugThrottler || new DefaultThrottler(false);
-    this._injectors = {};
-    this._extractors = {};
+    )
+    this._debugThrottler = options.debugThrottler || new DefaultThrottler(false)
+    this._injectors = {}
+    this._extractors = {}
 
     let codecOptions = {
       contextKey: options.contextKey || null,
       baggagePrefix: options.baggagePrefix || null,
       urlEncoding: false,
       metrics: this._metrics,
-    };
+    }
 
-    let textCodec = new TextMapCodec(codecOptions);
-    this.registerInjector(opentracing.FORMAT_TEXT_MAP, textCodec);
-    this.registerExtractor(opentracing.FORMAT_TEXT_MAP, textCodec);
+    let textCodec = new TextMapCodec(codecOptions)
+    this.registerInjector(opentracing.FORMAT_TEXT_MAP, textCodec)
+    this.registerExtractor(opentracing.FORMAT_TEXT_MAP, textCodec)
 
-    codecOptions.urlEncoding = true;
+    codecOptions.urlEncoding = true
 
-    let httpCodec = new TextMapCodec(codecOptions);
-    this.registerInjector(opentracing.FORMAT_HTTP_HEADERS, httpCodec);
-    this.registerExtractor(opentracing.FORMAT_HTTP_HEADERS, httpCodec);
+    let httpCodec = new TextMapCodec(codecOptions)
+    this.registerInjector(opentracing.FORMAT_HTTP_HEADERS, httpCodec)
+    this.registerExtractor(opentracing.FORMAT_HTTP_HEADERS, httpCodec)
 
-    let binaryCodec = new BinaryCodec();
-    this.registerInjector(opentracing.FORMAT_BINARY, binaryCodec);
-    this.registerExtractor(opentracing.FORMAT_BINARY, binaryCodec);
+    let binaryCodec = new BinaryCodec()
+    this.registerInjector(opentracing.FORMAT_BINARY, binaryCodec)
+    this.registerExtractor(opentracing.FORMAT_BINARY, binaryCodec)
 
-    const uuid = uuidv4();
-    this._tags[constants.TRACER_CLIENT_ID_TAG_KEY] = uuid;
+    const uuid = uuidv4()
+    this._tags[constants.TRACER_CLIENT_ID_TAG_KEY] = uuid
     this._process = {
       serviceName: serviceName,
       tags: Utils.convertObjectToTags(this._tags),
       uuid: uuid,
-    };
-    this._debugThrottler.setProcess(this._process);
+    }
+    this._debugThrottler.setProcess(this._process)
     // TODO update reporter to implement ProcessSetter
-    this._reporter.setProcess(this._process.serviceName, this._process.tags);
+    this._reporter.setProcess(this._process.serviceName, this._process.tags)
 
-    this._traceId128bit = options.traceId128bit;
-    this._shareRpcSpan = options.shareRpcSpan;
+    this._traceId128bit = options.traceId128bit
+    this._shareRpcSpan = options.shareRpcSpan
   }
 
   _startInternalSpan(
     spanContext: SpanContext,
     operationName: string,
     startTime: number,
-    userTags: {} | null | undefined,
-    internalTags: {} | null | undefined,
     references: Array<Reference>,
     hadParent: boolean,
-    isRpcServer: boolean
+    isRpcServer: boolean,
+    userTags?: {} | null ,
+    internalTags?: {} | null ,
   ): Span {
-    const span = new Span(this, operationName, spanContext, startTime, references);
+    const span = new Span(this, operationName, spanContext, startTime, references)
     if (!span._spanContext.samplingFinalized) {
-      const decision = this._sampler.onCreateSpan(span);
-      span._applySamplingDecision(decision);
+      const decision = this._sampler.onCreateSpan(span)
+      span._applySamplingDecision(decision)
     }
 
     if (userTags) {
-      span.addTags(userTags);
+      span.addTags(userTags)
     }
     if (internalTags) {
       span._appendTags(internalTags); // no need to run internal tags through sampler
@@ -149,35 +158,35 @@ export class Tracer {
 
     // emit metrics
     if (span.context().isSampled()) {
-      this._metrics.spansStartedSampled.increment(1);
+      this._metrics.spansStartedSampled.increment(1)
       if (!hadParent) {
-        this._metrics.tracesStartedSampled.increment(1);
+        this._metrics.tracesStartedSampled.increment(1)
       } else if (isRpcServer) {
-        this._metrics.tracesJoinedSampled.increment(1);
+        this._metrics.tracesJoinedSampled.increment(1)
       }
     } else {
-      this._metrics.spansStartedNotSampled.increment(1);
+      this._metrics.spansStartedNotSampled.increment(1)
       if (!hadParent) {
-        this._metrics.tracesStartedNotSampled.increment(1);
+        this._metrics.tracesStartedNotSampled.increment(1)
       } else if (isRpcServer) {
-        this._metrics.tracesJoinedNotSampled.increment(1);
+        this._metrics.tracesJoinedNotSampled.increment(1)
       }
     }
 
-    return span;
+    return span
   }
 
   _report(span: Span): void {
-    this._metrics.spansFinished.increment(1);
-    this._reporter.report(span);
+    this._metrics.spansFinished.increment(1)
+    this._reporter.report(span)
   }
 
   registerInjector(format: string, injector: Injector): void {
-    this._injectors[format] = injector;
+    this._injectors[format] = injector
   }
 
   registerExtractor(format: string, extractor: Extractor): void {
-    this._extractors[format] = extractor;
+    this._extractors[format] = extractor
   }
 
   /**
@@ -204,62 +213,61 @@ export class Tracer {
    *        to represent time values with sub-millisecond accuracy.
    * @return {Span} - a new Span object.
    **/
-  startSpan(operationName: string, options: startSpanOptions | null | undefined): Span {
-    options = options || {};
-    let references = options.references || [];
+  startSpan(operationName: string, options: startSpanOptions | null ): Span {
+    options = options || {}
+    let references = options.references || []
 
-    let userTags = options.tags;
-    let startTime = options.startTime || this.now();
+    let userTags = options.tags
+    let startTime = options.startTime || this.now()
 
     // followsFromIsParent is used to ensure that CHILD_OF reference is preferred
     // as a parent even if it comes after FOLLOWS_FROM reference.
-    let followsFromIsParent = false;
-    let parent: SpanContext | null | undefined =
-      options.childOf instanceof Span ? options.childOf.context() : options.childOf;
+    let followsFromIsParent = false
+    let parent: SpanContext | undefined = options.childOf instanceof Span ? options.childOf.context() : options.childOf
     // If there is no childOf in options, then search list of references
     for (let i = 0; i < references.length; i++) {
-      let ref: Reference = references[i];
+      let ref: Reference = references[i]
       if (ref.type() === opentracing.REFERENCE_CHILD_OF) {
         if (!parent || followsFromIsParent) {
-          parent = ref.referencedContext();
-          break;
+          parent = ref.referencedContext()
+          break
         }
       } else if (ref.type() === opentracing.REFERENCE_FOLLOWS_FROM) {
         if (!parent) {
-          parent = ref.referencedContext();
-          followsFromIsParent = true;
+          parent = ref.referencedContext()
+          followsFromIsParent = true
         }
       }
     }
 
-    let ctx: SpanContext;
-    let internalTags: any = {};
-    let hasValidParent = false;
-    const isRpcServer = Boolean(userTags && userTags[otTags.SPAN_KIND] === otTags.SPAN_KIND_RPC_SERVER);
+    let ctx: SpanContext
+    let internalTags: any = {}
+    let hasValidParent = false
+    const isRpcServer = Boolean(userTags && userTags[otTags.SPAN_KIND] === otTags.SPAN_KIND_RPC_SERVER)
     if (!parent || !parent.isValid) {
       if (this._traceId128bit) {
-        let randomId = Utils.getRandom128();
-        ctx = new SpanContext(randomId, randomId.slice(-8));
+        let randomId = Utils.getRandom128()
+        ctx = new SpanContext(randomId, randomId.slice(-8), null)
       } else {
-        let randomId = Utils.getRandom64();
-        ctx = new SpanContext(randomId, randomId);
+        let randomId = Utils.getRandom64()
+        ctx = new SpanContext(randomId, randomId, null)
       }
       if (parent) {
         // fake parent, doesn't contain a parent trace-id, but may contain debug-id/baggage
         if (parent.isDebugIDContainerOnly() && this._isDebugAllowed(operationName)) {
-          ctx._setSampled(true);
-          ctx._setDebug(true);
-          internalTags[constants.JAEGER_DEBUG_HEADER] = parent.debugId;
+          ctx._setSampled(true)
+          ctx._setDebug(true)
+          internalTags[constants.JAEGER_DEBUG_HEADER] = parent.debugId
         }
         // baggage that could have been passed via `jaeger-baggage` header
-        ctx.baggage = parent.baggage;
+        ctx.baggage = parent.baggage
       }
     } else {
-      hasValidParent = true;
-      let spanId = this._shareRpcSpan && isRpcServer ? parent.spanId : Utils.getRandom64();
-      ctx = parent._makeChildContext(spanId);
+      hasValidParent = true
+      let spanId = this._shareRpcSpan && isRpcServer ? parent.spanId : Utils.getRandom64()
+      ctx = parent._makeChildContext(spanId)
       if (this._shareRpcSpan && isRpcServer) {
-        ctx.parentId = parent.parentId;
+        ctx.parentId = parent.parentId
       }
       if (parent.isRemote()) {
         ctx.finalizeSampling(); // will finalize sampling for all spans sharing this traceId
@@ -270,12 +278,12 @@ export class Tracer {
       ctx,
       operationName,
       startTime,
-      userTags,
-      internalTags,
       references,
       hasValidParent,
-      isRpcServer
-    );
+      isRpcServer,
+      userTags,
+      internalTags,
+    )
   }
 
   /**
@@ -291,14 +299,14 @@ export class Tracer {
    **/
   inject(spanContext: SpanContext | Span, format: string, carrier: any): void {
     if (!spanContext) {
-      return;
+      return
     }
-    const injector = this._injectors[format];
+    const injector = this._injectors[format]
     if (!injector) {
-      throw new Error(`Unsupported format: ${format}`);
+      throw new Error(`Unsupported format: ${format}`)
     }
-    const _context = spanContext instanceof Span ? spanContext.context() : spanContext;
-    injector.inject(_context, carrier);
+    const _context = spanContext instanceof Span ? spanContext.context() : spanContext
+    injector.inject(_context, carrier)
   }
 
   /**
@@ -312,15 +320,15 @@ export class Tracer {
    *         be found in `carrier`
    */
   extract(format: string, carrier: any): SpanContext {
-    let extractor = this._extractors[format];
+    let extractor = this._extractors[format]
     if (!extractor) {
-      throw new Error(`Unsupported format: ${format}`);
+      throw new Error(`Unsupported format: ${format}`)
     }
-    const spanContext = extractor.extract(carrier);
+    const spanContext = extractor.extract(carrier)
     if (spanContext) {
-      spanContext._setRemote(true);
+      spanContext._setRemote(true)
     }
-    return spanContext;
+    return spanContext
   }
 
   /**
@@ -328,13 +336,13 @@ export class Tracer {
    *
    * @param {Function} [callback] - a callback that runs after the tracer has been closed.
    **/
-  close(callback: Function): void {
-    let reporter = this._reporter;
-    this._reporter = new NoopReporter();
+  close(callback: () => void): void {
+    let reporter = this._reporter
+    this._reporter = new NoopReporter()
     reporter.close(() => {
-      this._sampler.close(callback);
-    });
-    this._debugThrottler.close();
+      this._sampler.close(callback)
+    })
+    this._debugThrottler.close()
   }
 
   /**
@@ -345,10 +353,10 @@ export class Tracer {
   now(): number {
     // TODO investigate process.hrtime; verify it is available in all Node versions.
     // http://stackoverflow.com/questions/11725691/how-to-get-a-microtime-in-node-js
-    return Date.now();
+    return Date.now()
   }
 
   _isDebugAllowed(operation: string): boolean {
-    return this._debugThrottler.isAllowed(operation);
+    return this._debugThrottler.isAllowed(operation)
   }
 }

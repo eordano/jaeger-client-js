@@ -10,20 +10,18 @@
 // or implied. See the License for the specific language governing permissions and limitations under
 // the License.
 
-import * as constants from './constants'
 import { SamplingState } from './samplers/v2/sampling_state'
 import { Utils } from './util'
-import { Span } from './span'
 
 export class SpanContext {
   _traceId: any
   _spanId: any
   _parentId: any
-  _traceIdStr: string | null | undefined
-  _spanIdStr: string | null | undefined
-  _parentIdStr: string | null | undefined
+  _traceIdStr?: string | null 
+  _spanIdStr?: string | null 
+  _parentIdStr?: string | null 
   _baggage: any
-  _debugId: string | null | undefined
+  _debugId?: string | null 
   _samplingState: SamplingState
   _remote: boolean // indicates that span context represents a remote parent
 
@@ -31,12 +29,12 @@ export class SpanContext {
     traceId: any,
     spanId: any,
     parentId: any,
-    traceIdStr: string | null | undefined,
-    spanIdStr: string | null | undefined,
-    parentIdStr: string | null | undefined,
+    traceIdStr?: string | null ,
+    spanIdStr?: string | null ,
+    parentIdStr?: string | null ,
     baggage: any = {},
-    debugId: string | null | undefined = '',
-    samplingState: SamplingState | null | undefined,
+    debugId: string | null  = '',
+    samplingState?: SamplingState | null ,
   ) {
     this._traceId = traceId
     this._spanId = spanId
@@ -46,11 +44,11 @@ export class SpanContext {
     this._parentIdStr = parentIdStr
     this._baggage = baggage
     this._debugId = debugId
-    this._samplingState = samplingState || new SamplingState(this.spanIdStr)
+    this._samplingState = samplingState || new SamplingState(this._spanIdStr)
     this._remote = false
   }
 
-  get traceId(): any {
+  get traceId(): Buffer {
     if (this._traceId == null && this._traceIdStr != null) {
       // make sure that the string is 32 or 16 characters long to generate the
       // corresponding 64 or 128 bits buffer by padding the start with zeros if necessary
@@ -74,35 +72,35 @@ export class SpanContext {
     return this._traceId
   }
 
-  get spanId(): any {
+  get spanId(): Buffer {
     if (this._spanId == null && this._spanIdStr != null) {
       this._spanId = Utils.encodeInt64(this._spanIdStr)
     }
     return this._spanId
   }
 
-  get parentId(): any {
+  get parentId(): Buffer {
     if (this._parentId == null && this._parentIdStr != null) {
       this._parentId = Utils.encodeInt64(this._parentIdStr)
     }
     return this._parentId
   }
 
-  get traceIdStr(): string | null | undefined {
+  get traceIdStr(): string | null  {
     if (this._traceIdStr == null && this._traceId != null) {
       this._traceIdStr = Utils.removeLeadingZeros(this._traceId.toString('hex'))
     }
     return this._traceIdStr
   }
 
-  get spanIdStr(): string | null | undefined {
+  get spanIdStr(): string | null  {
     if (this._spanIdStr == null && this._spanId != null) {
       this._spanIdStr = Utils.removeLeadingZeros(this._spanId.toString('hex'))
     }
     return this._spanIdStr
   }
 
-  get parentIdStr(): string | null | undefined {
+  get parentIdStr(): string | null  {
     if (this._parentIdStr == null && this._parentId != null) {
       this._parentIdStr = Utils.removeLeadingZeros(
         this._parentId.toString('hex'),
@@ -119,7 +117,7 @@ export class SpanContext {
     return this._baggage
   }
 
-  get debugId(): string | null | undefined {
+  get debugId(): string | null  {
     return this._debugId
   }
 
@@ -127,22 +125,22 @@ export class SpanContext {
     return this._samplingState.isFinal()
   }
 
-  set traceId(traceId: Buffer): void {
+  set traceId(traceId: Buffer) {
     this._traceId = traceId
     this._traceIdStr = null
   }
 
-  set spanId(spanId: Buffer): void {
+  set spanId(spanId: Buffer) {
     this._spanId = spanId
     this._spanIdStr = null
   }
 
-  set parentId(parentId: Buffer | null): void {
+  set parentId(parentId: Buffer | null) {
     this._parentId = parentId
     this._parentIdStr = null
   }
 
-  set flags(flags: number): void {
+  set flags(flags: number) {
     this._samplingState.setFlags(flags)
   }
 
@@ -162,11 +160,11 @@ export class SpanContext {
     this._remote = value
   }
 
-  set baggage(baggage: any): void {
+  set baggage(baggage: any) {
     this._baggage = baggage
   }
 
-  set debugId(debugId: string | null | undefined): void {
+  set debugId(debugId: string | null ) {
     this._debugId = debugId
   }
 
@@ -295,7 +293,7 @@ export class SpanContext {
     parentId: any,
     flags: number,
     baggage: any = {},
-    debugId: string | null | undefined = '',
+    debugId: string | null  = '',
   ): SpanContext {
     const ctx = new SpanContext(
       traceId,
@@ -317,7 +315,7 @@ export class SpanContext {
     parentIdStr: any,
     flags: number,
     baggage: any = {},
-    debugId: string | null | undefined = '',
+    debugId: string | null  = '',
   ): SpanContext {
     const ctx = new SpanContext(
       null, // traceId,

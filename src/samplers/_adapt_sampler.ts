@@ -14,7 +14,7 @@ import { {SAMPLER_API_V2} } from './constants'
 import { Span } from '../span'
 import { BaseSamplerV2 } from './v2/base'
 
-export function adaptSampler(sampler: any): Sampler | null | undefined {
+export function adaptSampler(sampler?: any): Sampler | null  {
   if (!sampler) {
     return null
   }
@@ -94,7 +94,7 @@ class LegacySamplerV1Adapter extends LegacySamplerV1Base {
     return this._delegate.toString()
   }
 
-  close(callback: Function | null | undefined) {
+  close(callback?: Function | null ) {
     this._delegate.close(callback)
   }
 }

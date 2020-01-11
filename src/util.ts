@@ -158,7 +158,7 @@ export class Utils {
    */
   static countdownCallback(
     limit: number,
-    callback: () => void | null | undefined,
+    callback?: () => void | null ,
   ): () => void {
     let count = 0
     return () => {

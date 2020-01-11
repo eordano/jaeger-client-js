@@ -73,7 +73,7 @@ export class GuaranteedThroughputSampler implements LegacySamplerV1 {
     )
   }
 
-  close(callback: Function | null | undefined): void {
+  close(callback?: Function | null ): void {
     // neither probabilistic nor rate limiting samplers allocate resources,
     // so their close methods are effectively no-op. We do not need to
     // pass the callback to them (if we did we'd need to wrap it).

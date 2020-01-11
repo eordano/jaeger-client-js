@@ -19,7 +19,7 @@ export class RateLimiter {
   constructor(
     creditsPerSecond: number,
     maxBalance: number,
-    initBalance: number | null | undefined,
+    initBalance?: number | null ,
   ) {
     this._creditsPerSecond = creditsPerSecond
     this._balance = initBalance || Math.random() * maxBalance

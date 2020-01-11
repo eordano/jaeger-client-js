@@ -59,7 +59,7 @@ export class TextMapCodec {
     }
   }
 
-  extract(carrier: any): SpanContext | null | undefined {
+  extract(carrier?: any): SpanContext | null  {
     let spanContext = new SpanContext()
     let baggage = {}
     let debugId = ''

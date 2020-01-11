@@ -13,5 +13,5 @@ import { SpanContext } from "../span_context";
 // the License.
 
 export interface Extractor {
-  extract(carrier: any): SpanContext | null | undefined
+  extract(carrier?: any): SpanContext | null 
 }

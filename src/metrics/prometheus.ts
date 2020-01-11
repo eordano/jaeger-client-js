@@ -36,7 +36,7 @@ class GaugePromWrapper {
 
 export class PrometheusMetricsFactory {
   _cache: any = {}
-  _namespace: string | null | undefined
+  _namespace?: string | null 
   _promClient: any
 
   /**
@@ -53,7 +53,7 @@ export class PrometheusMetricsFactory {
    * @param {Object} promClient - prom-client object.
    * @param {String} namespace - Optional a namespace that prepends to each metric name.
    */
-  constructor(promClient: Object, namespace: string | null | undefined) {
+  constructor(promClient?: Object, namespace: string | null ) {
     if (!promClient || !promClient.Counter || !promClient.Gauge) {
       throw new Error('prom-client must be provided')
     }

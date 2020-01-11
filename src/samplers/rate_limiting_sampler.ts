@@ -21,7 +21,7 @@ export class RateLimitingSampler extends LegacySamplerV1Base
 
   constructor(
     maxTracesPerSecond: number,
-    initBalance: number | null | undefined,
+    initBalance?: number | null ,
   ) {
     super('RateLimitingSampler')
     this._init(maxTracesPerSecond, initBalance)
@@ -33,7 +33,7 @@ export class RateLimitingSampler extends LegacySamplerV1Base
     return this._maxTracesPerSecond !== prevMaxTracesPerSecond
   }
 
-  _init(maxTracesPerSecond: number, initBalance: number | null | undefined) {
+  _init(maxTracesPerSecond?: number, initBalance: number | null ) {
     if (maxTracesPerSecond < 0) {
       throw new Error(
         `maxTracesPerSecond must be greater than 0.0.  Received ${maxTracesPerSecond}`,

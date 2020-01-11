@@ -11,6 +11,6 @@
 // the License.
 
 export type LengthResult = {
-  err: string | null | undefined
+  err?: string | null 
   length: number
 }

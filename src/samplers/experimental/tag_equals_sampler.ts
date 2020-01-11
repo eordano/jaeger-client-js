@@ -77,7 +77,7 @@ export class TagEqualsSampler extends BaseSamplerV2 {
   }
 
   _decide(span: Span, tagValue: any): SamplingDecision {
-    const match: Matcher | null | undefined = this._matchers[tagValue]
+    const match?: Matcher | null  = this._matchers[tagValue]
     if (match) {
       if (match.firehose) {
         span._spanContext._setFirehose(true)

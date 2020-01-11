@@ -135,7 +135,7 @@ export class PerOperationSampler implements Sampler {
     return false // TODO equal should be removed
   }
 
-  close(callback: Function | null | undefined): void {
+  close(callback?: Function | null ): void {
     // all nested samplers are of simple types, so we do not need to Close them
     if (callback) {
       callback()

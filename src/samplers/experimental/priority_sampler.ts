@@ -50,7 +50,7 @@ export class PrioritySampler extends BaseSamplerV2 {
   _getOrCreateState(span: Span): PrioritySamplerState {
     const store = span.context()._samplingState.extendedState()
     const stateKey = this.uniqueName()
-    let state: PrioritySamplerState | null | undefined = store[stateKey]
+    let state?: PrioritySamplerState | null  = store[stateKey]
     if (!state) {
       state = new PrioritySamplerState(this._delegates.length)
       store[stateKey] = state
@@ -101,7 +101,7 @@ export class PrioritySampler extends BaseSamplerV2 {
     })
   }
 
-  close(callback: () => void | null | undefined): void {
+  close(callback?: () => void | null ): void {
     const countdownCallback = Utils.countdownCallback(
       this._delegates.length,
       callback,

@@ -52,7 +52,7 @@ export class TestUtils {
    * @param {Object} span - span from which to read the tags.
    * @param {Array} [keys] - if specified, only tags with these keys are returned.
    */
-  static getTags(span: Span, keys: Array<string> | null | undefined): any {
+  static getTags(span?: Span, keys: Array<string> | null ): any {
     let actualTags = {}
     for (let i = 0; i < span._tags.length; i++) {
       let key = span._tags[i].key

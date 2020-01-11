@@ -18,3 +18,5 @@
 export interface ProcessSetter {
   setProcess(process: any): void
 }
+
+export type Process = any

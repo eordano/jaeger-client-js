@@ -36,5 +36,5 @@ export interface LegacySamplerV1 {
 
   equal(other: LegacySamplerV1): boolean
 
-  close(callback: Function | null | undefined): void
+  close(callback?: Function | null ): void
 }
